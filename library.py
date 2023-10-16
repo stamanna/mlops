@@ -115,15 +115,18 @@ class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
     self.target_column = target_column
     self.high = None
     self.low = None
+    self.fitt= False
 
   def fit(self,X, y=None):
     assert isinstance(X, pd.core.frame.DataFrame), f'Expected DataFrame but got {type(X)} instead.'
     column_data = X[self.target_column]
     self.high = column_data.mean()+3 *column_data.std()
     self.low = column_data.mean()-3 *column_data.std()
+    self.fitt= True
     return self
 
   def transform(self,X):
+    assert self.fitt, f'NotFittedError:Call fit before transform'
     X_=X.copy()
     X_[self.target_column]= X[self.target_column].clip(upper=self.high)
     return X_
@@ -131,6 +134,7 @@ class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
   def fit_transform(self,X):
     self.fit(X)
     return self.transform(X)
+
 
 class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
   def __init__(self, target_column, fence='outer'):
