@@ -132,3 +132,46 @@ class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
     self.fit(X)
     return self.transform(X)
 
+class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column, fence='outer'):
+    assert fence in ['inner', 'outer']
+
+    self.fence= fence
+    self.fence_l= None
+    self.fence_h=None
+    self. target_column=target_column
+    
+
+  def fit(self,X,y=None):
+    '''q1 = transformed_df[column].quantile(0.25)
+        q3 = transformed_df[column].quantile(0.75)
+        iqr = q3-q1
+        outer_low = q1-3*iqr
+        outer_high = q3+3*iqr'''
+    assert isinstance(X, pd.core.frame.DataFrame), f'expected Dataframe but got {type(X)} instead.'
+
+    q1 = X[self.target_column].quantile(0.25)
+    q3 = X[self.target_column].quantile(0.75)
+    iqr = q3-q1
+    outer_low = q1-3*iqr
+    outer_high = q3+3*iqr
+    inner_low = q1-1.5*iqr
+    inner_high = q3+1.5*iqr
+    
+    if self.fence=="outer":
+      self.fence_l= outer_low
+      self.fence_h=outer_high
+    elif self.fence=="inner":
+      self.fence_l= inner_low
+      self.fence_h=inner_high
+    return self
+
+  def transform(self,X):
+    X_=X.copy()
+    X_[self.target_column]= X[self.target_column].clip(lower=self.fence_l,upper=self.fence_h)
+    X_.reset_index(inplace=True)
+    return X_
+
+  def fit_transform(self,X,y=None):
+    self.fit(X,y)
+    return self.transform(X)
