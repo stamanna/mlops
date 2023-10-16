@@ -108,4 +108,27 @@ class CustomOHETransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y=None):
     print(f'Warning: {self.__class__.__name__}.fit_transform is not supported. Please use transform() instead.')
     return self.transform(X)
-    
+
+
+class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column):
+    self.target_column = target_column
+    self.high = None
+    self.low = None
+
+  def fit(self,X, y=None):
+    assert isinstance(X, pd.core.frame.DataFrame), f'Expected DataFrame but got {type(X)} instead.'
+    column_data = X[self.target_column]
+    self.high = column_data.mean()+3 *column_data.std()
+    self.low = column_data.mean()-3 *column_data.std()
+    return self
+
+  def transform(self,X):
+    X_=X.copy()
+    X_[self.target_column]= X[self.target_column].clip(upper=self.high)
+    return X_
+
+  def fit_transform(self,X):
+    self.fit(X)
+    return self.transform(X)
+
