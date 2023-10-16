@@ -80,7 +80,7 @@ class CustomRenamingTransformer(BaseEstimator, TransformerMixin):
     X_.rename(columns=self.mapping_dict, inplace=True)
     return X_
 
-def fit_transform(self, X, y = None):
+  def fit_transform(self, X, y = None):
     #self.fit(X,y)
     result = self.transform(X)
     return result
