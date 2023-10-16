@@ -162,7 +162,7 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
     if self.fence=="outer":
       self.fence_l= outer_low
       self.fence_h=outer_high
-      #self.fitt=True
+      self.fitt=True
     elif self.fence=="inner":
       self.fence_l= inner_low
       self.fence_h=inner_high
