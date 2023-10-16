@@ -140,6 +140,7 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
     self.fence_l= None
     self.fence_h=None
     self. target_column=target_column
+    self.fitt= False
     
 
   def fit(self,X,y=None):
@@ -161,12 +162,17 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
     if self.fence=="outer":
       self.fence_l= outer_low
       self.fence_h=outer_high
+      #self.fitt=True
     elif self.fence=="inner":
       self.fence_l= inner_low
       self.fence_h=inner_high
+      self.fitt=True
+    
+    
     return self
 
   def transform(self,X):
+    assert self.fitt, f'NotFittedError:Call fit before transform'
     X_=X.copy()
     X_[self.target_column]= X[self.target_column].clip(lower=self.fence_l,upper=self.fence_h)
     X_.reset_index(inplace=True)
