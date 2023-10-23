@@ -179,7 +179,7 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
     assert self.fitt, f'NotFittedError:Call fit before transform'
     X_=X.copy()
     X_[self.target_column]= X[self.target_column].clip(lower=self.fence_l,upper=self.fence_h)
-    X_.reset_index(inplace=True)
+    X_.reset_index(inplace=True,drop=True)
     return X_
 
   def fit_transform(self,X,y=None):
