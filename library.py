@@ -6,10 +6,17 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier  # the KNN model
+from sklearn.metrics import f1_score
+
 import subprocess
 import sys
 subprocess.call([sys.executable, '-m', 'pip', 'install', 'category_encoders'])  #replaces !pip install
 import category_encoders as ce
+
+titanic_variance_based_split = 107
+customer_variance_based_split = 113 
 
 class CustomMappingTransformer(BaseEstimator, TransformerMixin):
 
@@ -217,3 +224,32 @@ class CustomRobustTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X,y=None):
     self.fit(X,y)
     return self.transform(X)
+
+titanic_transformer = Pipeline(steps=[
+    ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('map_class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('target_joined', ce.TargetEncoder(cols=['Joined'],
+                           handle_missing='return_nan', #will use imputer later to fill in
+                           handle_unknown='return_nan'  #will use imputer later to fill in
+    )),
+    ('tukey_age', CustomTukeyTransformer(target_column='Age', fence='outer')),
+    ('tukey_fare', CustomTukeyTransformer(target_column='Fare', fence='outer')),
+    ('scale_age', CustomRobustTransformer('Age')),  #from chapter 5
+    ('scale_fare', CustomRobustTransformer('Fare')),  #from chapter 5
+    ('imputer', KNNImputer(n_neighbors=5, weights="uniform", add_indicator=False))  #from chapter 6
+    ], verbose=True)
+
+customer_transformer = Pipeline(steps=[
+    ('map_os', CustomMappingTransformer('OS', {'Android': 0, 'iOS': 1})),
+    ('target_isp', ce.TargetEncoder(cols=['ISP'],
+                           handle_missing='return_nan', #will use imputer later to fill in
+                           handle_unknown='return_nan'  #will use imputer later to fill in
+    )),
+    ('map_level', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high':2})),
+    ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('tukey_age', CustomTukeyTransformer('Age', 'inner')),  #from chapter 4
+    ('tukey_time spent', CustomTukeyTransformer('Time Spent', 'inner')),  #from chapter 4
+    ('scale_age', CustomRobustTransformer('Age')), #from 5
+    ('scale_time spent', CustomRobustTransformer('Time Spent')), #from 5
+    ('impute', KNNImputer(n_neighbors=5, weights="uniform", add_indicator=False)),
+    ], verbose=True)
