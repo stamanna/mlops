@@ -285,6 +285,7 @@ def dataset_setup(original_table, label_column_name:str, the_transformer, rs, ts
   X_test_numpy = X_test_transformed.to_numpy()
   y_train_numpy = np.array(y_train)
   y_test_numpy = np.array(y_test) 
+  return X_train_numpy, X_test_numpy, y_train_numpy, y_test_numpy
   
 def customer_setup(customer_table, transformer=customer_transformer, rs=customer_variance_based_split, ts=.2):
   return dataset_setup(customer_table, 'Rating', transformer, rs=rs, ts=ts)
