@@ -287,8 +287,8 @@ def dataset_setup(original_table, label_column_name:str, the_transformer, rs, ts
   y_test_numpy = np.array(y_test) 
   return X_train_numpy, X_test_numpy, y_train_numpy, y_test_numpy
   
-def customer_setup(customer_table, transformer=customer_transformer, rs=customer_variance_based_split, ts=.2):
-  return dataset_setup(customer_table, 'Rating', transformer, rs=rs, ts=ts)
+def titanic_setup(titanic_table, transformer=titanic_transformer, rs=titanic_variance_based_split, ts=.2):
+  return dataset_setup(titanic_table, 'Survived', transformer, rs=rs, ts=ts)
   
 def customer_setup(customer_table, transformer=customer_transformer, rs=customer_variance_based_split, ts=.2):
   return dataset_setup(customer_table, 'Rating', transformer, rs=rs, ts=ts)
