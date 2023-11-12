@@ -18,6 +18,9 @@ import category_encoders as ce
 titanic_variance_based_split = 107
 customer_variance_based_split = 113 
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+
 class CustomMappingTransformer(BaseEstimator, TransformerMixin):
 
   def __init__(self, mapping_column, mapping_dict:dict):
