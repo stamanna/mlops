@@ -15,6 +15,9 @@ import sys
 subprocess.call([sys.executable, '-m', 'pip', 'install', 'category_encoders'])  #replaces !pip install
 import category_encoders as ce
 
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
+
 titanic_variance_based_split = 107
 customer_variance_based_split = 113 
 
