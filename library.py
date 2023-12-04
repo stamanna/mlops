@@ -21,6 +21,10 @@ from sklearn.model_selection import HalvingGridSearchCV
 titanic_variance_based_split = 107
 customer_variance_based_split = 113 
 
+
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import ParameterGrid
+
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
